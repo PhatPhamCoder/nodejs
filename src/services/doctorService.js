@@ -8,11 +8,11 @@ let getTopDoctorHome = (limitInput) => {
                 where: { RoleId: 'R2' },
                 order: [['createdAt', 'DESC']],
                 attributes: {
-                    exclude: ['password', 'image']
+                    exclude: ['password']
                 },
                 include: [
-                    { model: db.AllCode, as: 'positionData', attributes: ['valueEN', 'valueVI'] },
-                    { model: db.AllCode, as: 'genderData', attributes: ['valueEN', 'valueVI'] }
+                    { model: db.Allcode, as: 'positionData', attributes: ['valueEN', 'valueVI'] },
+                    { model: db.Allcode, as: 'genderData', attributes: ['valueEN', 'valueVI'] }
                 ],
                 raw: true,
                 nest: true
@@ -28,6 +28,26 @@ let getTopDoctorHome = (limitInput) => {
     })
 }
 
+let getAllDoctors = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let doctors = await db.User.findAll({
+                where: { RoleId: 'R2' },
+                attributes: {
+                    exclude: ['password', 'image']
+                },
+            })
+            resolve({
+                errCode: 0,
+                data: doctors
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
+    getAllDoctors: getAllDoctors,
 }
