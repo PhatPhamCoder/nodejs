@@ -1,5 +1,5 @@
 import db from "../models/index";
-import _, { reject } from 'lodash';
+import _ from 'lodash';
 require('dotenv').config();
 
 let getTopDoctorHome = (limitInput) => {
@@ -152,6 +152,7 @@ let bulkCreateSchedule = (data) => {
                         return item;
                     })
                 }
+
                 //get all existing data
                 let existing = await db.Schedule.findAll(
                     {
@@ -160,17 +161,12 @@ let bulkCreateSchedule = (data) => {
                         raw: true
                     },
                 );
-                //convert date
-                if (existing && existing.length > 0) {
-                    existing = existing.map(item => {
-                        item.date = new Date(item.date).getTime();
-                        return item;
-                    })
-                }
+
                 //compare difference
                 let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-                    return a.timeType === b.timeType && a.date === b.date;
+                    return a.timeType === b.timeType && +a.date === +b.date;
                 });
+
                 //create data
                 if (toCreate && toCreate.length > 0) {
                     await db.Schedule.bulkCreate(toCreate);
@@ -189,7 +185,7 @@ let bulkCreateSchedule = (data) => {
     })
 }
 
-let getScheduleDoctorByDate = (doctorId, date) => {
+let getScheduleDoctorByDate = async (doctorId, date) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!doctorId || !date) {
@@ -203,14 +199,20 @@ let getScheduleDoctorByDate = (doctorId, date) => {
                         doctorId: doctorId,
                         date: date
                     },
+                    include: [
+                        { model: db.Allcode, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] },
+                    ],
+                    raw: false,
+                    nest: true,
                 })
 
-                if (!dataSchedule) dataSchedule = []
+                if (!dataSchedule) dataSchedule = [];
 
                 resolve({
                     errCode: 0,
                     data: dataSchedule
                 })
+
             }
         } catch (e) {
             reject(e)
@@ -226,3 +228,4 @@ module.exports = {
     bulkCreateSchedule: bulkCreateSchedule,
     getScheduleDoctorByDate: getScheduleDoctorByDate,
 }
+
