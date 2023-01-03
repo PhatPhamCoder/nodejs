@@ -28,7 +28,8 @@ let initWebRouters = (app) => {
     router.get('/api/get-detail-doctor-by-id', doctorController.getDetailDoctorById);
     router.post('/api/bulk-create-schedule', doctorController.bulkCreateSchedule);
     router.get('/api/get-schedule-doctor-by-date', doctorController.getScheduleDoctorByDate);
-    router.get('/api/get-extra-infor-doctor-doctor-by-id', doctorController.getExtraInforDoctorById);
+    router.get('/api/get-extra-infor-doctor-by-id', doctorController.getExtraInforDoctorById);
+    router.get('/api/get-profile-doctor-by-id', doctorController.getProfileDoctorById);
 
     return app.use("/", router);
 }
