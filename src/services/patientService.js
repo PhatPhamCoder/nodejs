@@ -11,12 +11,14 @@ let postBookAppointment = (data) => {
                     errMessage: 'Missing required parameters'
                 })
             } else {
+
                 await emailService.sendSimpleEmail({
                     reciverEmail: data.email,
-                    patientName: "PhatPham",
-                    time: "08:00 - 09:00 Chủ nhật 22/01/2023",
-                    doctorName: "Ngọc Nhi",
-                    redirectLink: "facebook.com/phatphamstudio.com"
+                    patientName: data.fullName,
+                    time: data.timeString,
+                    doctorName: data.doctorName,
+                    language: data.language,
+                    redirectLink: "facebook.com/phatphamstudio.com",
                 })
 
                 //upsert patient
@@ -28,6 +30,7 @@ let postBookAppointment = (data) => {
                     },
                 });
                 console.log('check user', user[0])
+
                 //create a booking record
                 if (user && user[0]) {
                     await db.Booking.findOrCreate({
