@@ -1,8 +1,6 @@
 import db from "../models/index";
-import bcrypt from 'bcryptjs';
-import allcode from "../models/allcode";
-import { where } from "sequelize";
 require('dotenv').config();
+import emailService from './emailService';
 
 let postBookAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
@@ -13,6 +11,14 @@ let postBookAppointment = (data) => {
                     errMessage: 'Missing required parameters'
                 })
             } else {
+                await emailService.sendSimpleEmail({
+                    reciverEmail: data.email,
+                    patientName: "PhatPham",
+                    time: "08:00 - 09:00 Chủ nhật 22/01/2023",
+                    doctorName: "Ngọc Nhi",
+                    redirectLink: "facebook.com/phatphamstudio.com"
+                })
+
                 //upsert patient
                 let user = await db.User.findOrCreate({
                     where: { email: data.email },
