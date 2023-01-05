@@ -4,12 +4,10 @@ import allcode from "../models/allcode";
 import { where } from "sequelize";
 require('dotenv').config();
 
-const salt = bcrypt.genSaltSync(10);
-
 let postBookAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.email) {
+            if (!data.email || !data.doctorId || !data.timeType || !data.date) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing required parameters'
@@ -18,7 +16,7 @@ let postBookAppointment = (data) => {
                 //upsert patient
                 let user = await db.User.findOrCreate({
                     where: { email: data.email },
-                    default: {
+                    defaults: {
                         email: data.email,
                         RoleId: 'R3'
                     },
@@ -35,7 +33,6 @@ let postBookAppointment = (data) => {
                             date: data.date,
                             timeType: data.timeType
                         }
-
                     })
                 }
 
@@ -47,10 +44,6 @@ let postBookAppointment = (data) => {
 
         } catch (e) {
             reject(e)
-            return res.status(200).json({
-                errCode: -1,
-                errMessage: 'Error from the sever...'
-            })
         }
     })
 }
