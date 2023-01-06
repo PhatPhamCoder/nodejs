@@ -49,18 +49,34 @@ let getAllDoctors = () => {
     })
 }
 
+let checkRequiredFields = (inputData) => {
+    let arrfields = ['doctorId', 'contentHTML', 'contentMarkdown', 'action',
+        'selectedPrice', 'selectedProvince', 'selectedPayment', 'nameClinic',
+        'addressClinic', 'note', 'specialtyId']
+
+    let isValid = true;
+    let element = '';
+    for (let i = 0; i < arrfields.length; i++) {
+        if (!inputData[arrfields[i]]) {
+            isValid = false;
+            element = arrfields[i]
+            break;
+        }
+    }
+    return ({
+        isValid: isValid,
+        element: element
+    })
+}
+
 let saveDetailInforDoctor = (inputData) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inputData.doctorId || !inputData.contentHTML ||
-                !inputData.contentMarkdown || !inputData.action ||
-                !inputData.selectedPrice || !inputData.selectedProvince ||
-                !inputData.selectedPayment || !inputData.nameClinic ||
-                !inputData.addressClinic || !inputData.note
-            ) {
+            let checkObj = checkRequiredFields(inputData)
+            if (checkObj.isValid === false) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'Missing parameter'
+                    errMessage: `Missing parameter: ${checkObj.element}`
                 })
             } else {
 
@@ -105,7 +121,8 @@ let saveDetailInforDoctor = (inputData) => {
                     doctorInfor.nameClinic = inputData.nameClinic;
                     doctorInfor.addressClinic = inputData.addressClinic;
                     doctorInfor.note = inputData.note;
-                    doctorInfor.updateAt = new Date();
+                    doctorInfor.specialtyId = inputData.specialtyId;
+                    doctorInfor.clinicId = inputData.clinicId;
                     await doctorInfor.save()
                 } else {
                     //create
@@ -117,6 +134,8 @@ let saveDetailInforDoctor = (inputData) => {
                         nameClinic: inputData.nameClinic,
                         addressClinic: inputData.addressClinic,
                         note: inputData.note,
+                        specialtyId: inputData.specialtyId,
+                        clinicId: inputData.clinicId,
                     })
                 }
 
@@ -171,12 +190,8 @@ let getDetailDoctorById = (inputId) => {
                     nest: true
                 })
 
-                if (data && data.length > 0) {
-                    data.map(item => {
-                        item.image = new Buffer(item.image, 'base64').toString('binary');
-                        return item
-                    })
-
+                if (data && data.image) {
+                    data.image = new Buffer(data.image, 'base64').toString('binary');
                 }
 
                 if (!data) data = {};
