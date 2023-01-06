@@ -171,8 +171,12 @@ let getDetailDoctorById = (inputId) => {
                     nest: true
                 })
 
-                if (data && data.image) {
-                    data.image = new Buffer(data.image, 'base64').toString('binary');
+                if (data && data.length > 0) {
+                    data.map(item => {
+                        item.image = new Buffer(item.image, 'base64').toString('binary');
+                        return item
+                    })
+
                 }
 
                 if (!data) data = {};
