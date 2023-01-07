@@ -40,7 +40,6 @@ let getAllSpecialty = () => {
                     item.image = new Buffer(item.image, 'base64').toString('binary');
                     return item;
                 })
-
             }
             resolve({
                 errCode: 0,

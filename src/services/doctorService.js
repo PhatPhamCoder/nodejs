@@ -123,6 +123,7 @@ let saveDetailInforDoctor = (inputData) => {
                     doctorInfor.note = inputData.note;
                     doctorInfor.specialtyId = inputData.specialtyId;
                     doctorInfor.clinicId = inputData.clinicId;
+
                     await doctorInfor.save()
                 } else {
                     //create
