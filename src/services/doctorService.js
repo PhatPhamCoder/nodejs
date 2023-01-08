@@ -409,9 +409,9 @@ let getListPatientDorDoctor = (doctorId, date) => {
                             attributes: ['firstName', 'email', 'address'],
                             include: [
                                 { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
-                                { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
                             ]
                         },
+                        { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueEN', 'valueVI'] },
                     ],
                     raw: false,
                     nest: true
